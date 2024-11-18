@@ -1,4 +1,3 @@
-```markdown
 # Updating Changes to GitHub: Step-by-Step Guide
 
 This guide will help you update your GitHub repository after making changes in your local folder.
@@ -73,4 +72,3 @@ Go to your GitHub repository in your web browser and confirm that the changes ha
   Ensure your SSH key is configured correctly.
 
 You’re all set to update your GitHub repository!
-```
