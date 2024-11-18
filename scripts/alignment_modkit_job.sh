@@ -35,19 +35,7 @@
 #     - **Merge Job** depends on the **Alignment Array Job**: The Merge Job will only start after all tasks in the Alignment Array Job have successfully completed.
 #     - **Modkit Extraction Job** depends on the **Merge Job**: The Modkit Extraction Job will only start after the Merge Job has successfully completed.
 #
-# Usage:
-#   This script is intended to be submitted via `qsub` from `main_job.sh`.
-#   Example:
-#     qsub alignment_modkit_job.sh GROUP SAMPLE UNALIGNED_BAM_DIR TEMP_DIR ALIGNED_BAM_DIR \
-#         ANNOTATION_FILE REFERENCE_FILE ALIGN_THREADS MERGE_THREADS MODKIT_THREADS \
-#         QSUB_PROJECT TOTAL_CPUS_ALIGN TOTAL_CPUS_MERGE TOTAL_CPUS_MODKIT ROOT_DIR \
-#         MODIFIED_BASES ALL_MODS MODKIT_OUTPUT_DIR FILTER_THRESHOLD_ALL FILTER_THRESHOLD_A \
-#         FILTER_THRESHOLD_C FILTER_THRESHOLD_T MOD_THRESHOLD_M6A MOD_THRESHOLD_PSEU \
-#         MOD_THRESHOLD_INOSINE MOD_THRESHOLD_M5C VALID_COVERAGE_THRESHOLD PERCENT_MODIFIED_THRESHOLD
-#
 # =============================================================================
-
-# ----------------------------- Configuration ----------------------------------
 
 # Enable strict error handling
 set -euo pipefail
@@ -124,12 +112,12 @@ ALIGN_ARRAY_JOB_FULL_ID=$(qsub -terse \
     -t 1-"${BAM_COUNT}" \
     -P "${QSUB_PROJECT}" \
     -N "${ALIGN_ARRAY_JOB_NAME}" \
-    -l h_rt=2:00:00 \
-    -l mem_free=64G \
+    -l h_rt="${ALIGN_JOB_RUNTIME}" \
+    -l mem_free="${ALIGN_JOB_MEMORY}" \
     -pe omp "${TOTAL_CPUS_ALIGN}" \
-    -m ea \
-    -j y \
-    "${ROOT_DIR}/RNA_pipeline/scripts/align_array_job.sh" \
+    -m "${QSUB_EMAIL}" \
+    -j "${QSUB_JOINT_STDERR}" \
+    "${SCRIPTS_DIR}/align_array_job.sh" \
     "${TEMP_DIR}" "${ALIGNED_BAM_DIR}" "${ANNOTATION_FILE}" "${REFERENCE_FILE}" "${ALIGN_THREADS}"
 )
 
@@ -155,12 +143,12 @@ MERGE_JOB_ID=$(qsub -terse \
     -hold_jid "${ALIGN_ARRAY_JOB_ID}" \
     -P "${QSUB_PROJECT}" \
     -N "${MERGE_JOB_NAME}" \
-    -l h_rt=2:00:00 \
-    -l mem_free=64G \
+    -l h_rt="${MERGE_JOB_RUNTIME}" \
+    -l mem_free="${MERGE_JOB_MEMORY}" \
     -pe omp "${TOTAL_CPUS_MERGE}" \
-    -m ea \
-    -j y \
-    "${ROOT_DIR}/RNA_pipeline/scripts/merge_job.sh" \
+    -m "${QSUB_EMAIL}" \
+    -j "${QSUB_JOINT_STDERR}" \
+    "${SCRIPTS_DIR}/merge_job.sh" \
     "${ALIGNED_BAM_DIR}" "${SAMPLE}" "${GROUP}" "${MERGE_THREADS}"
 )
 
@@ -177,13 +165,13 @@ MODKIT_JOB_ID=$(qsub -terse \
     -hold_jid "${MERGE_JOB_ID}" \
     -P "${QSUB_PROJECT}" \
     -N "${MODKIT_JOB_NAME}" \
-    -l h_rt=3:00:00 \
-    -l mem_free=64G \
+    -l h_rt="${MODKIT_JOB_RUNTIME}" \
+    -l mem_free="${MODKIT_JOB_MEMORY}" \
     -pe omp "${TOTAL_CPUS_MODKIT}" \
-    -m ea \
-    -j y \
-    "${ROOT_DIR}/RNA_pipeline/scripts/modkit_job.sh" \
-    "${GROUP}" "${SAMPLE}" "${MODIFIED_BASES}" "${ALL_MODS}" "${ROOT_DIR}" "${ALIGNED_BAM_DIR}" "${MODKIT_OUTPUT_DIR}" \
+    -m "${QSUB_EMAIL}" \
+    -j "${QSUB_JOINT_STDERR}" \
+    "${SCRIPTS_DIR}/modkit_job.sh" \
+    "${GROUP}" "${SAMPLE}" "${MODIFIED_BASES}" "${ALL_MODS}" "${ALIGNED_BAM_DIR}" "${MODKIT_OUTPUT_DIR}" \
     "${FILTER_THRESHOLD_ALL}" "${FILTER_THRESHOLD_A}" "${FILTER_THRESHOLD_C}" "${FILTER_THRESHOLD_T}" \
     "${MOD_THRESHOLD_M6A}" "${MOD_THRESHOLD_PSEU}" "${MOD_THRESHOLD_INOSINE}" "${MOD_THRESHOLD_M5C}" \
     "${VALID_COVERAGE_THRESHOLD}" "${PERCENT_MODIFIED_THRESHOLD}" "${MODKIT_THREADS}"

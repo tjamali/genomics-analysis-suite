@@ -70,62 +70,56 @@
 #
 # =============================================================================
 
-# ----------------------------- Configuration ----------------------------------
-
 # Enable strict error handling
 set -euo pipefail
 
-# =============================================================================
-# Define Variables from Environment
-# =============================================================================
+# ----------------------- Step 0: Validate Partitions JSON -----------------------
+PARTITIONS_JSON="${BASH_SOURCE_DIR}/partitions.json"  # Default path to partitions.json
 
-# All variables are assumed to be exported from run_pipeline.sh
-# No need to assign them here unless transformation is needed
-
-# =============================================================================
-# Pipeline Steps
-# =============================================================================
+if [ ! -f "${PARTITIONS_JSON}" ]; then
+    echo "[ERROR] partitions.json not found at '${PARTITIONS_JSON}'. Aborting."
+    exit 1
+fi
 
 # ----------------------- Step 1: Submit Dorado Basecalling Job -----------------------
-echo "Submitting Dorado Basecalling Job..."
+echo "Submitting Dorado Basecalling Job to process all partitions..."
 
-# Define job name
+# Define Dorado job name
 DORADO_JOB_NAME="dorado_job_${GROUP}_${SAMPLE}"
 
 # Submit the Dorado basecalling script with necessary arguments and qsub options
-DORADO_JOB_ID=$(qsub -terse \
+DORADO_JOB_ID=$(qsub -terse -V \
     -P "${QSUB_PROJECT}" \
     -N "${DORADO_JOB_NAME}" \
-    -l h_rt=6:00:00 \
-    -l mem_free=128G \
+    -l h_rt="${DORADO_JOB_RUNTIME}" \
+    -l mem_free="${DORADO_JOB_MEMORY}" \
     -pe omp "${TOTAL_CPUS_DORADO}" \
-    -l gpus=1 \
-    -l gpu_type=L40S \
-    -m ea \
-    -j y \
-    "${ROOT_DIR}/RNA_pipeline/scripts/dorado_job.sh" \
-    "${GROUP}" "${SAMPLE}" "${MODIFIED_BASES}" "${ALL_MODS}" "${ROOT_DIR}" "${INPUT_DIR}" "${UNALIGNED_BAM_DIR}" "${MODEL_NAME}" "${MIN_QSCORE}"
+    -l gpus="${TOTAL_GPUS_DORADO}" \
+    -l gpu_type="${DORADO_GPU_TYPE}" \
+    -m "${QSUB_EMAIL}" \
+    -j "${QSUB_JOINT_STDERR}" \
+    "${SCRIPTS_DIR}/dorado_job.sh" \
+    "${MODIFIED_BASES}" "${UNALIGNED_BAM_DIR}" "${MODEL_NAME}" "${MIN_QSCORE}" "${PARTITIONS_JSON}"
 )
 
 echo "Dorado Basecalling Job submitted with Job ID: ${DORADO_JOB_ID}"
 echo
 
-# ----------------------- Step 2: Submit Alignment & Modkit Job -----------------------
+# ----------------------- Step 2: Submit Alignment & Modkit Extraction Job -----------------------
 echo "Submitting Alignment & Modkit Job for Alignment Processing and Extracting Modifications..."
 
-# Define job name
+# Define Alignment & Modkit Extraction job name
 ALIGN_MODKIT_JOB_NAME="align_modkit_job_${GROUP}_${SAMPLE}"
 
-# Submit the alignment job with dependency on Dorado job
+# Submit alignment_modkit_job.sh with dependency on Dorado job
 ALIGN_MODKIT_JOB_ID=$(qsub -terse -V \
     -hold_jid "${DORADO_JOB_ID}" \
     -P "${QSUB_PROJECT}" \
     -N "${ALIGN_MODKIT_JOB_NAME}" \
-    -l h_rt=2:00:00 \
-    -m ea \
-    -j y \
-    "${ROOT_DIR}/RNA_pipeline/scripts/alignment_modkit_job.sh" \
-    # No positional arguments needed since variables are from the environment
+    -l h_rt=1:00:00 \
+    -m "${QSUB_EMAIL}" \
+    -j "${QSUB_JOINT_STDERR}" \
+    "${SCRIPTS_DIR}/alignment_modkit_job.sh"
 )
 
 echo "Alignment Job submitted with Job ID: ${ALIGN_MODKIT_JOB_ID}"
@@ -135,6 +129,6 @@ echo
 echo "Pipeline submission complete."
 echo "============================================="
 echo "Dorado Job ID: ${DORADO_JOB_ID}"
-echo "Alignment Job ID: ${ALIGN_MODKIT_JOB_ID}"
+echo "Alignment & Modkit Extraction Job ID: ${ALIGN_MODKIT_JOB_ID}"
 echo "============================================="
 

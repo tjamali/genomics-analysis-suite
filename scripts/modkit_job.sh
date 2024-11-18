@@ -40,17 +40,11 @@
 #   **Input Path Format:**
 #     - The input BAM file must adhere to the following directory structure:
 #       ```
-#       ${ROOT_DIR}/RNA/${GROUP}/${SAMPLE}/aligned_bam_${ALL_MODS}/${GROUP}_${SAMPLE}_primary.bam
+#       ${ALIGNED_BAM_DIR}/${GROUP}_${SAMPLE}_primary.bam
 #       ```
-#       - `{ROOT_DIR}`: Root path of the project (e.g., `/restricted/projectnb/leshlab/net/tjamali/project`)
+#       - `{ALIGNED_BAM_DIR}`: Path to the aligned BAM directory (e.g., ${ROOT_DIR}/RNA/Control/C0/aligned_bam_m6A_DRACH/)
 #       - `{GROUP}`: Experimental or biological group (e.g., `Control`, `AD`)
 #       - `{SAMPLE}`: Specific sample identifier (e.g., `C0`, `A1`)
-#       - `{ALL_MODS}`: Type of RNA modification(s) (e.g., `m5C`, `m6A_DRACH`, `inosine_m6A`, `pseU`)
-#
-#     - **Example Input Path:**
-#       ```
-#       ${ROOT_DIR}/RNA/Control/C0/aligned_bam_m6A_DRACH/C0_Control_primary.bam
-#       ```
 #
 #   **Output:**
 #     - **BED File (`${OUTPUT_BED}`):**
@@ -77,8 +71,8 @@
 set -euo pipefail
 
 # ----------------------- Step 0: Parse Input Arguments -----------------------
-if [ "$#" -ne 18 ]; then
-    echo "Usage: $0 GROUP SAMPLE MODIFIED_BASES ALL_MODS ROOT_DIR ALIGNED_BAM_DIR OUTPUT_DIR \
+if [ "$#" -ne 17 ]; then
+    echo "Usage: $0 GROUP SAMPLE MODIFIED_BASES ALL_MODS ALIGNED_BAM_DIR OUTPUT_DIR \
 FILTER_THRESHOLD_ALL FILTER_THRESHOLD_A FILTER_THRESHOLD_C FILTER_THRESHOLD_T \
 MOD_THRESHOLD_M6A MOD_THRESHOLD_PSEU MOD_THRESHOLD_INOSINE MOD_THRESHOLD_M5C \
 VALID_COVERAGE_THRESHOLD PERCENT_MODIFIED_THRESHOLD MODKIT_THREADS"
@@ -89,23 +83,22 @@ GROUP="${1}"                  # Experimental or biological group (e.g., Control,
 SAMPLE="${2}"                 # Sample identifier (e.g., C0, A9)
 MODIFIED_BASES="${3}"         # String of modifications (e.g., m5C, m6A_DRACH, inosine_m6A, pseU) separated by spaces
 ALL_MODS="${4}"               # Combined modifications string separated by underscores
-ROOT_DIR="${5}"               # Root directory of the project
-ALIGNED_BAM_DIR="${6}"        # Directory to the final aligned BAM files
-OUTPUT_DIR="${7}"             # Directory to store the output BED files
+ALIGNED_BAM_DIR="${5}"        # Directory to the final aligned BAM files
+OUTPUT_DIR="${6}"             # Directory to store the output BED files
 
-FILTER_THRESHOLD_ALL="${8}"   # Threshold for all bases coverage
-FILTER_THRESHOLD_A="${9}"     # Threshold for A bases coverage
-FILTER_THRESHOLD_C="${10}"    # Threshold for C bases coverage
-FILTER_THRESHOLD_T="${11}"    # Threshold for T bases coverage
+FILTER_THRESHOLD_ALL="${7}"   # Threshold for all bases coverage
+FILTER_THRESHOLD_A="${8}"     # Threshold for A bases coverage
+FILTER_THRESHOLD_C="${9}"     # Threshold for C bases coverage
+FILTER_THRESHOLD_T="${10}"    # Threshold for T bases coverage
 
-MOD_THRESHOLD_M6A="${12}"     # Threshold for m6A modifications
-MOD_THRESHOLD_PSEU="${13}"    # Threshold for pseU modifications
-MOD_THRESHOLD_INOSINE="${14}" # Threshold for inosine modifications
-MOD_THRESHOLD_M5C="${15}"     # Threshold for m5C modifications
+MOD_THRESHOLD_M6A="${11}"     # Threshold for m6A modifications
+MOD_THRESHOLD_PSEU="${12}"    # Threshold for pseU modifications
+MOD_THRESHOLD_INOSINE="${13}" # Threshold for inosine modifications
+MOD_THRESHOLD_M5C="${14}"     # Threshold for m5C modifications
 
-VALID_COVERAGE_THRESHOLD="${16}"    # Threshold for valid coverage
-PERCENT_MODIFIED_THRESHOLD="${17}"  # Threshold for percent modified
-MODKIT_THREADS="${18}"              # Number of threads for modkit
+VALID_COVERAGE_THRESHOLD="${15}"    # Threshold for valid coverage
+PERCENT_MODIFIED_THRESHOLD="${16}"  # Threshold for percent modified
+MODKIT_THREADS="${17}"              # Number of threads for modkit
 
 # ----------------------- Step 2: Job Information -----------------------
 echo "=========================================================="
@@ -119,7 +112,7 @@ fi
 echo "=========================================================="
 
 # ----------------------- Step 3: Validate Input BAM -----------------------
-# Define the input BAM file for modkit extractor
+# Define the input BAM file for modkit extractor. This has the form defined in merge job.
 INPUT_BAM="${ALIGNED_BAM_DIR}/${GROUP}_${SAMPLE}_primary.bam"
 
 # Validate that the input BAM exists
