@@ -34,6 +34,25 @@ This is the main script for running the pipeline. It initializes necessary varia
 ./run_pipeline.sh
 ```
 
+### Key Features
+
+To help you understand the workflow of `run_pipeline.sh`, here are its key features:
+
+- **Pod5 Files Listing and Partitioning:**  
+  The script invokes the Python script (`partition_pod5_files.py`) to gather all `.pod5` files within `INPUT_DIR`, including all subdirectories. It then partitions these files into sublists where each sublist's total size does not exceed the specified size limit. This approach avoids manipulating the actual files and prepares the data for subsequent jobs.
+
+- **File Size Validation:**  
+  The Python script checks if any individual `.pod5` file exceeds the specified size limit. If such files are detected, the script raises an error and aborts execution to maintain pipeline integrity.
+
+- **List Generation for Job Distribution:**  
+  The Python script generates a comprehensive `partitions.json` file that contains information about all partitions. This facilitates organized processing for downstream jobs by providing a clear structure of how files are divided.
+
+- **Environment Variable Exporting:**  
+  The script exports all necessary variables to ensure that `main_job.sh` has access to the required configurations and paths. This includes paths to input/output directories, reference files, and job parameters.
+
+- **Job Submission:**  
+  Finally, `run_pipeline.sh` submits the `main_job.sh` script to the job scheduler with appropriate resource allocations and naming conventions. This ensures efficient and organized job management within the cluster environment.
+
 ### Key Variables to Configure
 
 Before running the pipeline, ensure the following variables are correctly set in the `run_pipeline.sh` script. The **boldface** variables must be checked or specified, even if other variables are not. Some variables are derived from the **boldface** variables, e.g., `ALL_MODS` is generated from `MODIFIED_BASES`, or `UNALIGNED_BAM_DIR` is defined based on `OUTPUT_DIR` and `ALL_MODS`. Additionally, some variables have default values, so if you do not specify them, no error will likely occur. For example, the number of CPUs and threads for each job.
@@ -122,3 +141,5 @@ Before running the pipeline, ensure the following variables are correctly set in
   - Maintain consistency in tool versions (Dorado, Minimap2, Modkit) as specified in the prerequisites to ensure compatibility and reproducibility of results.
 
 For more detailed information, refer to the comments and documentation within each script.
+
+
