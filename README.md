@@ -16,8 +16,6 @@ The **NanoporeCaller** project focuses on the development of a **custom neural-n
 * Accepts raw nanopore signals (`fast5`, `pod5`) and generates aligned outputs (`BAM`, `SAM`, `CRAM`).
 * Designed to support **epigenetic profiling** of healthy versus cancerous samples.
 
-For detailed methods and implementation, see the [NanoporeCaller README](./nanopore_caller/README.md).
-
 ---
 
 ### [Remora Training Pipeline](./remora_training_pipeline)
@@ -28,8 +26,6 @@ The **Remora Training Pipeline** provides a structured workflow for training **R
 * Designed for execution in **high-performance computing environments** with GPU acceleration.
 * Supports flexible specification of experimental groups, base modifications, and computational resources.
 
-See the [Remora Training Pipeline README](./remora_training_pipeline/README.md) for prerequisites, directory structures, and resource allocation guidelines.
-
 ---
 
 ### [RNA Pipeline](./rna_pipeline)
@@ -39,8 +35,6 @@ The **RNA Pipeline** offers an **end-to-end RNA sequencing analysis framework** 
 * Implements partitioning of `.pod5` files to handle large datasets.
 * Executes basecalling (**Dorado**), alignment (**Minimap2**), and modification extraction (**Modkit**).
 * Employs cluster-based job scheduling to enable scalable processing of transcriptomic datasets.
-
-A full usage guide is available in the [RNA Pipeline README](./rna-pipeline/README.md).
 
 ---
 
