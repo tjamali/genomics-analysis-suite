@@ -13,7 +13,7 @@ This repository hosts a collection of computational pipelines and tools for the 
 The **NanoporeCaller** project focuses on the development of a **custom neural-network–based basecaller** capable of distinguishing methylated from unmethylated bases in Nanopore sequencing data.
 
 * Builds upon existing frameworks such as **Bonito** (Python) and **Dorado** (C++).
-* Accepts raw nanopore signals (`fast5`, `pod5`) and generates aligned outputs (`BAM`, `SAM`, `CRAM`).
+* Accepts raw nanopore signals (`pod5`) and generates aligned outputs (`BAM`, `SAM`, `CRAM`).
 * Designed to support **epigenetic profiling** of healthy versus cancerous samples.
 
 ---
