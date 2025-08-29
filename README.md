@@ -8,7 +8,7 @@ This repository hosts a collection of computational pipelines and tools for the 
 
 ## Subprojects
 
-### [NanoporeCaller](./nanopore-caller)
+### [Nanopore Caller](./nanopore_caller)
 
 The **NanoporeCaller** project focuses on the development of a **custom neural-network–based basecaller** capable of distinguishing methylated from unmethylated bases in Nanopore sequencing data.
 
@@ -20,7 +20,7 @@ For detailed methods and implementation, see the [NanoporeCaller README](./nanop
 
 ---
 
-### [Remora Training Pipeline](./remora-training-pipeline)
+### [Remora Training Pipeline](./remora_training_pipeline)
 
 The **Remora Training Pipeline** provides a structured workflow for training **Remora models** using canonical and modified RNA datasets.
 
@@ -32,7 +32,7 @@ See the [Remora Training Pipeline README](./remora_training_pipeline/README.md) 
 
 ---
 
-### [RNA Pipeline](./rna-pipeline)
+### [RNA Pipeline](./rna_pipeline)
 
 The **RNA Pipeline** offers an **end-to-end RNA sequencing analysis framework** for Nanopore data.
 
