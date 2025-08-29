@@ -61,6 +61,6 @@ This suite is intended for **research groups engaged in transcriptomic and epige
 
 ---
 
-## Citation and Contact
+## Citation
 
 If you make use of these tools in your research, please cite the relevant subproject(s). 
