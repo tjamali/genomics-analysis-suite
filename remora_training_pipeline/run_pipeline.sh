@@ -60,7 +60,7 @@
 #            └── run_training.sh
 #
 # Author: Tayeb Jamali
-# Date: 2025-1-7
+# Date: 2025-6-20
 # =============================================================================
 
 # Enable strict error handling
