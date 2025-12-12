@@ -64,3 +64,11 @@ This suite is intended for **research groups engaged in transcriptomic and epige
 ## Citation
 
 If you make use of these tools in your research, please cite the relevant subproject(s). 
+
+## Contact
+
+For any issues or questions regarding the Remora Training Pipeline, please contact:
+
+**Author:** Tayeb Jamali  
+**Email:** tjamali.official\@gmail.edu
+**Date:** 2025-1-7
