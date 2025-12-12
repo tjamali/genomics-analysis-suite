@@ -259,5 +259,6 @@ For more detailed information, refer to the comments and documentation within ea
 For any issues or questions regarding the Remora Training Pipeline, please contact:
 
 **Author:** Tayeb Jamali  
-**Email:** tjamali\@bu.edu
+**Email:** tjamali.official\@gmail.edu
 **Date:** 2025-1-7
+
